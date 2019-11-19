@@ -1,5 +1,7 @@
 package AdsProject;
 
+import java.util.ArrayList;
+
 class RedBlackTreeNode {
 
     Building building;
@@ -17,7 +19,7 @@ public class RedBlackBST {
     public static final int RED = 0;
     public static final int BLACK = 1;
 
-    public static final RedBlackTreeNode nil = new RedBlackTreeNode(null);
+    public static final RedBlackTreeNode nil = new RedBlackTreeNode(new Building(-1,-1,-1));
     public RedBlackTreeNode root = nil;
 
     public void printTree(RedBlackTreeNode node) {
@@ -25,15 +27,15 @@ public class RedBlackBST {
             return;
         }
         printTree(node.left);
-        System.out.print(((node.color==RED)?"Color: Red ":"Color: Black ")+"Key: "+node.building.getBuildingNum()+" Parent: "+node.parent.building.getBuildingNum()+"\n");
+        System.out.print(((node.color == RED) ? "Color: Red " : "Color: Black ") + "Key: " + node.building.getBuildingNum() + " Parent: " + node.parent.building.getBuildingNum() + "\n");
         printTree(node.right);
     }
+
 
     public RedBlackTreeNode findNode(RedBlackTreeNode findNode, RedBlackTreeNode node) {
         if (root == nil) {
             return null;
         }
-
         if (findNode.building.getBuildingNum() < node.building.getBuildingNum()) {
             if (node.left != nil) {
                 return findNode(findNode, node.left);
@@ -48,23 +50,24 @@ public class RedBlackBST {
         return null;
     }
 
-    public RedBlackTreeNode findNodeFromTo(RedBlackTreeNode findNode, RedBlackTreeNode node) {
+    public void findNode(RedBlackTreeNode node, RedBlackTreeNode nodeFrom, RedBlackTreeNode nodeTo, ArrayList<RedBlackTreeNode> redBlackTreeNodes) {
         if (root == nil) {
-            return null;
+            return;
         }
-
-        if (findNode.building.getBuildingNum() < node.building.getBuildingNum()) {
+        if (nodeFrom.building.getBuildingNum() < node.building.getBuildingNum()) {
             if (node.left != nil) {
-                return findNode(findNode, node.left);
+                findNode(node.left, nodeFrom, nodeTo,redBlackTreeNodes);
             }
-        } else if (findNode.building.getBuildingNum() > node.building.getBuildingNum()) {
-            if (node.right != nil) {
-                return findNode(findNode, node.right);
-            }
-        } else if (findNode.building.getBuildingNum() == node.building.getBuildingNum()) {
-            return node;
         }
-        return null;
+        if (nodeFrom.building.getBuildingNum() <= node.building.getBuildingNum()
+                && nodeTo.building.getBuildingNum() >= node.building.getBuildingNum()) {
+            redBlackTreeNodes.add(node);
+        }
+        if (nodeTo.building.getBuildingNum() > node.building.getBuildingNum()) {
+            if (node.right != nil) {
+                findNode(node.right, nodeFrom, nodeTo,redBlackTreeNodes);
+            }
+        }
     }
 
     public void insert(RedBlackTreeNode node) {
@@ -198,7 +201,7 @@ public class RedBlackBST {
     }
 
     //Deletes whole tree
-    void deleteTree(){
+    void deleteTree() {
         root = nil;
     }
 
@@ -207,35 +210,35 @@ public class RedBlackBST {
     //This operation doesn't care about the new Node's connections
     //with previous node's left and right. The caller has to take care
     //of that.
-    void transplant(RedBlackTreeNode target, RedBlackTreeNode with){
-        if(target.parent == nil){
+    void transplant(RedBlackTreeNode target, RedBlackTreeNode with) {
+        if (target.parent == nil) {
             root = with;
-        }else if(target == target.parent.left){
+        } else if (target == target.parent.left) {
             target.parent.left = with;
-        }else
+        } else
             target.parent.right = with;
         with.parent = target.parent;
     }
 
-    boolean delete(RedBlackTreeNode z){
-        if((z = findNode(z, root))==null)return false;
+    boolean delete(RedBlackTreeNode z) {
+        if ((z = findNode(z, root)) == null) return false;
         RedBlackTreeNode x;
         RedBlackTreeNode y = z; // temporary reference y
         int y_original_color = y.color;
 
-        if(z.left == nil){
+        if (z.left == nil) {
             x = z.right;
             transplant(z, z.right);
-        }else if(z.right == nil){
+        } else if (z.right == nil) {
             x = z.left;
             transplant(z, z.left);
-        }else{
+        } else {
             y = treeMinimum(z.right);
             y_original_color = y.color;
             x = y.right;
-            if(y.parent == z)
+            if (y.parent == z)
                 x.parent = y;
-            else{
+            else {
                 transplant(y, y.right);
                 y.right = z.right;
                 y.right.parent = y;
@@ -245,59 +248,57 @@ public class RedBlackBST {
             y.left.parent = y;
             y.color = z.color;
         }
-        if(y_original_color==BLACK)
+        if (y_original_color == BLACK)
             deleteFixup(x);
         return true;
     }
 
-    void deleteFixup(RedBlackTreeNode x){
-        while(x!=root && x.color == BLACK){
-            if(x == x.parent.left){
+    void deleteFixup(RedBlackTreeNode x) {
+        while (x != root && x.color == BLACK) {
+            if (x == x.parent.left) {
                 RedBlackTreeNode w = x.parent.right;
-                if(w.color == RED){
+                if (w.color == RED) {
                     w.color = BLACK;
                     x.parent.color = RED;
                     rotateLeft(x.parent);
                     w = x.parent.right;
                 }
-                if(w.left.color == BLACK && w.right.color == BLACK){
+                if (w.left.color == BLACK && w.right.color == BLACK) {
                     w.color = RED;
                     x = x.parent;
                     continue;
-                }
-                else if(w.right.color == BLACK){
+                } else if (w.right.color == BLACK) {
                     w.left.color = BLACK;
                     w.color = RED;
                     rotateRight(w);
                     w = x.parent.right;
                 }
-                if(w.right.color == RED){
+                if (w.right.color == RED) {
                     w.color = x.parent.color;
                     x.parent.color = BLACK;
                     w.right.color = BLACK;
                     rotateLeft(x.parent);
                     x = root;
                 }
-            }else{
+            } else {
                 RedBlackTreeNode w = x.parent.left;
-                if(w.color == RED){
+                if (w.color == RED) {
                     w.color = BLACK;
                     x.parent.color = RED;
                     rotateRight(x.parent);
                     w = x.parent.left;
                 }
-                if(w.right.color == BLACK && w.left.color == BLACK){
+                if (w.right.color == BLACK && w.left.color == BLACK) {
                     w.color = RED;
                     x = x.parent;
                     continue;
-                }
-                else if(w.left.color == BLACK){
+                } else if (w.left.color == BLACK) {
                     w.right.color = BLACK;
                     w.color = RED;
                     rotateLeft(w);
                     w = x.parent.left;
                 }
-                if(w.left.color == RED){
+                if (w.left.color == RED) {
                     w.color = x.parent.color;
                     x.parent.color = BLACK;
                     w.left.color = BLACK;
@@ -309,8 +310,8 @@ public class RedBlackBST {
         x.color = BLACK;
     }
 
-    RedBlackTreeNode treeMinimum(RedBlackTreeNode subTreeRoot){
-        while(subTreeRoot.left!=nil){
+    RedBlackTreeNode treeMinimum(RedBlackTreeNode subTreeRoot) {
+        while (subTreeRoot.left != nil) {
             subTreeRoot = subTreeRoot.left;
         }
         return subTreeRoot;

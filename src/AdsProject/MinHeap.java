@@ -26,18 +26,29 @@ public class MinHeap {
         buildHeap();
     }
 
-    public void insert(MinHeapNode item) {
-        list.add(item);
+    public void insert(MinHeapNode node) {
+        list.add(node);
         int i = list.size() - 1;
         int parent = parent(i);
 
-        while (parent != i && list.get(i).building.getExecutedTime() < list.get(parent).building.getExecutedTime()) {
-            swap(i, parent);
-            i = parent;
-            parent = parent(i);
+        while (parent != i && list.get(i).building.getExecutedTime() <= list.get(parent).building.getExecutedTime()) {
+            if (list.get(i).building.getExecutedTime() < list.get(parent).building.getExecutedTime()) {
+                swap(i, parent);
+                i = parent;
+                parent = parent(i);
+            } else {
+                //if equal
+                if(list.get(i).building.getBuildingNum() < list.get(parent).building.getBuildingNum()){
+                    swap(i, parent);
+                    i = parent;
+                    parent = parent(i);
+                }
+                else{break;}
+            }
         }
+        //insert
         System.out.println("-----------------------------------------");
-        System.out.println("inserting building no:"+item.building.getBuildingNum());
+        System.out.println("inserting building no:"+node.building.getBuildingNum());
         print();
     }
 
@@ -56,7 +67,6 @@ public class MinHeap {
         } else if (list.size() == 1) {
 
             MinHeapNode min = list.remove(0);
-            System.out.println("Extracting building no:"+min.building.getBuildingNum());
             return min;
 
         }
@@ -83,11 +93,17 @@ public class MinHeap {
         int parent = parent(i);
 
         // bubble-up until heap property is maintained
-        while (i > 0 && list.get(parent).building.getExecutedTime() > list.get(i).building.getExecutedTime()) {
-
-            swap(i, parent);
-            i = parent;
-            parent = parent(parent);
+        while (i > 0 && list.get(parent).building.getExecutedTime() >= list.get(i).building.getExecutedTime()) {
+            if (list.get(i).building.getExecutedTime() == list.get(parent).building.getExecutedTime()
+                    && list.get(i).building.getBuildingNum() < list.get(parent).building.getBuildingNum()) {
+                swap(i, parent);
+                i = parent;
+                parent = parent(i);
+            } else {
+                swap(i, parent);
+                i = parent;
+                parent = parent(parent);
+            }
         }
     }
 
@@ -98,14 +114,26 @@ public class MinHeap {
         int smallest = -1;
 
         // find the smallest key between current node and its children.
-        if (left <= list.size() - 1 && list.get(left).building.getExecutedTime() < list.get(i).building.getExecutedTime()) {
-            smallest = left;
+        if (left <= list.size() - 1 && list.get(left).building.getExecutedTime() <= list.get(i).building.getExecutedTime()) {
+            if(list.get(left).building.getExecutedTime() == list.get(i).building.getExecutedTime()
+                && list.get(left).building.getBuildingNum() > list.get(i).building.getBuildingNum()){
+                smallest = i;
+            } else {
+                smallest = left;
+            }
         } else {
             smallest = i;
         }
 
-        if (right <= list.size() - 1 && list.get(right).building.getExecutedTime() < list.get(smallest).building.getExecutedTime()) {
-            smallest = right;
+        if (right <= list.size() - 1 && list.get(right).building.getExecutedTime() <= list.get(smallest).building.getExecutedTime()) {
+            if(list.get(right).building.getExecutedTime() < list.get(smallest).building.getExecutedTime()){
+                smallest = right;
+            }else {
+                //if equal - check building number
+                if(list.get(right).building.getBuildingNum() < list.get(smallest).building.getBuildingNum()){
+                    smallest = right;
+                }
+            }
         }
 
         // if the smallest key is not the current key then bubble-down it.
@@ -152,12 +180,11 @@ public class MinHeap {
         list.set(i, temp);
     }
 
-    public void print()
-    {
+    public void print() {
         for (MinHeapNode minHeapNode : list) {
-            System.out.println("BuildingNum:"+minHeapNode.building.getBuildingNum()+
-            " ExecutedTime:"+minHeapNode.building.getExecutedTime()+
-            " TotalTime:"+minHeapNode.building.getTotalTime());
+            System.out.println("BuildingNum:" + minHeapNode.building.getBuildingNum() +
+                    " ExecutedTime:" + minHeapNode.building.getExecutedTime() +
+                    " TotalTime:" + minHeapNode.building.getTotalTime());
         }
         System.out.println("-------------------------------------");
         /*
