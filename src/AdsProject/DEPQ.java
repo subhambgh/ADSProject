@@ -3,8 +3,8 @@ package AdsProject;
 import java.util.ArrayList;
 
 public class DEPQ {
-    RedBlackBST redBlackBST;
-    MinHeap minHeap;
+    public RedBlackBST redBlackBST;
+    public MinHeap minHeap;
 
     public DEPQ(){
         this.redBlackBST = new RedBlackBST();
@@ -15,7 +15,7 @@ public class DEPQ {
         /* Insert(buildingNum ,total_time) should produce no output unless buildingNum is a duplicate in which case you should output
            an error and stop. */
         if(findNode(minHeapNode.building.buildingNum)!=null){
-            System.out.print("Error: Duplicate Building Number !!");
+            WriteFile.writeLineWithNewLine("Error: Duplicate Building Number !!",1);
             System.exit(0);
         }
         //RBT ops
@@ -29,7 +29,7 @@ public class DEPQ {
 
     public MinHeapNode extractMin(){
         MinHeapNode minHeapNode = minHeap.extractMin();
-        redBlackBST.delete(minHeapNode.redBlackTreeNode);
+        //redBlackBST.delete(minHeapNode.redBlackTreeNode);
         return minHeapNode;
     }
 

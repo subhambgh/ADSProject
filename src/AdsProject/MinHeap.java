@@ -1,7 +1,6 @@
 package AdsProject;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 
 class MinHeapNode {
     Building building;
@@ -14,7 +13,8 @@ class MinHeapNode {
     public int compareTo(MinHeapNode otherMinHeap) {
         int thisBuilding = this.building.getExecutedTime();
         int otherBuilding = otherMinHeap.building.getExecutedTime();
-        if (thisBuilding == otherBuilding) { //breaking ties
+        //breaking ties
+        if (thisBuilding == otherBuilding) {
             thisBuilding = this.building.getBuildingNum();
             otherBuilding = otherMinHeap.building.getBuildingNum();
         }
@@ -51,8 +51,8 @@ public class MinHeap {
         }
 
         //insert
-        System.out.println("-----------------------------------------");
-        System.out.println("inserting building no:" + node.building.getBuildingNum());
+        WriteFile.writeLineWithNewLine("-----------------------------------------",0);
+        WriteFile.writeLineWithNewLine("inserting building no:" + node.building.getBuildingNum(),0);
         print();
     }
 
@@ -168,11 +168,11 @@ public class MinHeap {
 
     public void print() {
         for (MinHeapNode minHeapNode : list) {
-            System.out.println("BuildingNum:" + minHeapNode.building.getBuildingNum() +
+            WriteFile.writeLineWithNewLine("BuildingNum:" + minHeapNode.building.getBuildingNum() +
                     " ExecutedTime:" + minHeapNode.building.getExecutedTime() +
-                    " TotalTime:" + minHeapNode.building.getTotalTime());
+                    " TotalTime:" + minHeapNode.building.getTotalTime(),0);
         }
-        System.out.println("-------------------------------------");
+        WriteFile.writeLineWithNewLine("-------------------------------------",0);
         /*
         for (int i = 1; i <= list.size() / 2; i++) {
             System.out.print(" PARENT : " + list.get(i).executed_time

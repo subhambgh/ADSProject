@@ -1,7 +1,6 @@
 package AdsProject;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 
 class RedBlackTreeNode {
 
@@ -15,26 +14,12 @@ class RedBlackTreeNode {
     }
 
     public int compareTo(RedBlackTreeNode otherRedBlackTreeNode) {
-        int thisBuilding = this.building.getExecutedTime();
-        int otherBuilding = otherRedBlackTreeNode.building.getExecutedTime();
+        int thisBuilding = this.building.getBuildingNum();
+        int otherBuilding = otherRedBlackTreeNode.building.getBuildingNum();
         //ascending order
         //returns true if building_number of this is greater than other building
         return thisBuilding - otherBuilding;
     }
-
-    /*Comparator for sorting the list by Building Number*/
-    public static Comparator<RedBlackTreeNode> buildingComparator = new Comparator<RedBlackTreeNode>() {
-
-        public int compare(RedBlackTreeNode rbt1, RedBlackTreeNode rbt2) {
-            int buildingNum1 = rbt1.building.getBuildingNum();
-            int buildingNum2 = rbt2.building.getBuildingNum();
-
-            //ascending order
-            return buildingNum1-buildingNum2;
-
-            //descending order
-            //return buildingNum2 - buildingNum1;
-        }};
 }
 
 public class RedBlackBST {
@@ -50,7 +35,7 @@ public class RedBlackBST {
             return;
         }
         printTree(node.left);
-        System.out.print(((node.color == RED) ? "Color: Red " : "Color: Black ") + "Key: " + node.building.getBuildingNum() + " Parent: " + node.parent.building.getBuildingNum() + "\n");
+        WriteFile.writeLineWithNewLine(((node.color == RED) ? "Color: Red " : "Color: Black ") + "Key: " + node.building.getBuildingNum() + " Parent: " + node.parent.building.getBuildingNum() + "\n",0);
         printTree(node.right);
     }
 
