@@ -1,6 +1,7 @@
 package AdsProject;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 class RedBlackTreeNode {
 
@@ -12,6 +13,28 @@ class RedBlackTreeNode {
     RedBlackTreeNode(Building building) {
         this.building = building;
     }
+
+    public int compareTo(RedBlackTreeNode otherRedBlackTreeNode) {
+        int thisBuilding = this.building.getExecutedTime();
+        int otherBuilding = otherRedBlackTreeNode.building.getExecutedTime();
+        //ascending order
+        //returns true if building_number of this is greater than other building
+        return thisBuilding - otherBuilding;
+    }
+
+    /*Comparator for sorting the list by Building Number*/
+    public static Comparator<RedBlackTreeNode> buildingComparator = new Comparator<RedBlackTreeNode>() {
+
+        public int compare(RedBlackTreeNode rbt1, RedBlackTreeNode rbt2) {
+            int buildingNum1 = rbt1.building.getBuildingNum();
+            int buildingNum2 = rbt2.building.getBuildingNum();
+
+            //ascending order
+            return buildingNum1-buildingNum2;
+
+            //descending order
+            //return buildingNum2 - buildingNum1;
+        }};
 }
 
 public class RedBlackBST {
@@ -36,15 +59,15 @@ public class RedBlackBST {
         if (root == nil) {
             return null;
         }
-        if (findNode.building.getBuildingNum() < node.building.getBuildingNum()) {
+        if (findNode.compareTo(node)<0) {
             if (node.left != nil) {
                 return findNode(findNode, node.left);
             }
-        } else if (findNode.building.getBuildingNum() > node.building.getBuildingNum()) {
+        } else if (findNode.compareTo(node)>0) {
             if (node.right != nil) {
                 return findNode(findNode, node.right);
             }
-        } else if (findNode.building.getBuildingNum() == node.building.getBuildingNum()) {
+        } else if (findNode.compareTo(node)==0) {
             return node;
         }
         return null;
@@ -54,16 +77,15 @@ public class RedBlackBST {
         if (root == nil) {
             return;
         }
-        if (nodeFrom.building.getBuildingNum() < node.building.getBuildingNum()) {
+        if (nodeFrom.compareTo(node)<0) {
             if (node.left != nil) {
                 findNode(node.left, nodeFrom, nodeTo,redBlackTreeNodes);
             }
         }
-        if (nodeFrom.building.getBuildingNum() <= node.building.getBuildingNum()
-                && nodeTo.building.getBuildingNum() >= node.building.getBuildingNum()) {
+        if (nodeFrom.compareTo(node) <=0 && nodeTo.compareTo(node)>=0) {
             redBlackTreeNodes.add(node);
         }
-        if (nodeTo.building.getBuildingNum() > node.building.getBuildingNum()) {
+        if (nodeTo.compareTo(node)>0) {
             if (node.right != nil) {
                 findNode(node.right, nodeFrom, nodeTo,redBlackTreeNodes);
             }
@@ -79,7 +101,7 @@ public class RedBlackBST {
         } else {
             node.color = RED;
             while (true) {
-                if (node.building.getBuildingNum() < temp.building.getBuildingNum()) {
+                if (node.compareTo(temp)<0) {
                     if (temp.left == nil) {
                         temp.left = node;
                         node.parent = temp;
@@ -87,7 +109,7 @@ public class RedBlackBST {
                     } else {
                         temp = temp.left;
                     }
-                } else if (node.building.getBuildingNum() >= temp.building.getBuildingNum()) {
+                } else if (node.compareTo(temp)>=0) {
                     if (temp.right == nil) {
                         temp.right = node;
                         node.parent = temp;

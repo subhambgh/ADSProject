@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 
 public class Main {
@@ -129,6 +130,7 @@ public class Main {
             && buildingSelected.getBuildingNum() <= buildingNumTo){
             redBlackTreeNodes.add(new RedBlackTreeNode(buildingSelected));
         }
+        Collections.sort(redBlackTreeNodes,RedBlackTreeNode.buildingComparator);
         if(redBlackTreeNodes.size()==0){
             System.out.println("(0,0,0)");
         }else{

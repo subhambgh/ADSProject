@@ -1,6 +1,7 @@
 package AdsProject;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 class MinHeapNode {
     Building building;
@@ -8,6 +9,18 @@ class MinHeapNode {
 
     MinHeapNode(Building building) {
         this.building = building;
+    }
+
+    public int compareTo(MinHeapNode otherMinHeap) {
+        int thisBuilding = this.building.getExecutedTime();
+        int otherBuilding = otherMinHeap.building.getExecutedTime();
+        if (thisBuilding == otherBuilding) { //breaking ties
+            thisBuilding = this.building.getBuildingNum();
+            otherBuilding = otherMinHeap.building.getBuildingNum();
+        }
+        //ascending order
+        //returns true if execution_time/building_number of this is greater than other building
+        return thisBuilding - otherBuilding;
     }
 }
 
@@ -31,24 +44,15 @@ public class MinHeap {
         int i = list.size() - 1;
         int parent = parent(i);
 
-        while (parent != i && list.get(i).building.getExecutedTime() <= list.get(parent).building.getExecutedTime()) {
-            if (list.get(i).building.getExecutedTime() < list.get(parent).building.getExecutedTime()) {
-                swap(i, parent);
-                i = parent;
-                parent = parent(i);
-            } else {
-                //if equal
-                if(list.get(i).building.getBuildingNum() < list.get(parent).building.getBuildingNum()){
-                    swap(i, parent);
-                    i = parent;
-                    parent = parent(i);
-                }
-                else{break;}
-            }
+        while (parent != i && list.get(i).compareTo(list.get(parent))<0) {
+            swap(i, parent);
+            i = parent;
+            parent = parent(i);
         }
+
         //insert
         System.out.println("-----------------------------------------");
-        System.out.println("inserting building no:"+node.building.getBuildingNum());
+        System.out.println("inserting building no:" + node.building.getBuildingNum());
         print();
     }
 
@@ -93,17 +97,11 @@ public class MinHeap {
         int parent = parent(i);
 
         // bubble-up until heap property is maintained
-        while (i > 0 && list.get(parent).building.getExecutedTime() >= list.get(i).building.getExecutedTime()) {
-            if (list.get(i).building.getExecutedTime() == list.get(parent).building.getExecutedTime()
-                    && list.get(i).building.getBuildingNum() < list.get(parent).building.getBuildingNum()) {
-                swap(i, parent);
-                i = parent;
-                parent = parent(i);
-            } else {
-                swap(i, parent);
-                i = parent;
-                parent = parent(parent);
-            }
+        while (i > 0 && list.get(parent).compareTo(list.get(i))>0) {
+
+            swap(i, parent);
+            i = parent;
+            parent = parent(parent);
         }
     }
 
@@ -114,26 +112,14 @@ public class MinHeap {
         int smallest = -1;
 
         // find the smallest key between current node and its children.
-        if (left <= list.size() - 1 && list.get(left).building.getExecutedTime() <= list.get(i).building.getExecutedTime()) {
-            if(list.get(left).building.getExecutedTime() == list.get(i).building.getExecutedTime()
-                && list.get(left).building.getBuildingNum() > list.get(i).building.getBuildingNum()){
-                smallest = i;
-            } else {
-                smallest = left;
-            }
+        if (left <= list.size() - 1 && list.get(left).compareTo(list.get(i))<0) {
+            smallest = left;
         } else {
             smallest = i;
         }
 
-        if (right <= list.size() - 1 && list.get(right).building.getExecutedTime() <= list.get(smallest).building.getExecutedTime()) {
-            if(list.get(right).building.getExecutedTime() < list.get(smallest).building.getExecutedTime()){
-                smallest = right;
-            }else {
-                //if equal - check building number
-                if(list.get(right).building.getBuildingNum() < list.get(smallest).building.getBuildingNum()){
-                    smallest = right;
-                }
-            }
+        if (right <= list.size() - 1 && list.get(right).compareTo(list.get(smallest))<0) {
+            smallest = right;
         }
 
         // if the smallest key is not the current key then bubble-down it.
