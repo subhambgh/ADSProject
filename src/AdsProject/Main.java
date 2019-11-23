@@ -137,7 +137,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
-        Map<Integer, String> lines = ReadFile.readFile("C:\\Users\\Stefan\\Desktop\\ADS\\Sample_input1.txt");
+        Map<Integer, String> lines = ReadFile.readFile("C:\\Users\\Stefan\\Desktop\\ADS\\Sample_input3.txt");
         WriteFile.setOut(new BufferedWriter(new FileWriter("C:\\Users\\Stefan\\Desktop\\ADS\\output.txt")));
         //0 - prints both, 1 - prints higher priority only
         WriteFile.setPriority(1);
