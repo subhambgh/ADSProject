@@ -1,7 +1,15 @@
 package AdsProject;
 
 import java.util.ArrayList;
+/*
+    A Min Heap implementation based on executedTime, contains two classes
+    1.	MinHeapNode
+    2.	MinHeap
+    MinHeapNode also has a compareTo implementation – which compares two MinHeapNode based on the executedTime.
+    It is also used to break ties, comparing buildingNum when executedTime are equal.
+    MinHeap class is implemented using Arraylist<MinHeapNode>.
 
+ */
 class MinHeapNode {
     Building building;
     RedBlackTreeNode redBlackTreeNode;
@@ -26,160 +34,118 @@ class MinHeapNode {
 
 public class MinHeap {
 
-    public ArrayList<MinHeapNode> list;
+    public ArrayList<MinHeapNode> listOfNodes;
 
     public MinHeap() {
-
-        this.list = new ArrayList<MinHeapNode>();
+        this.listOfNodes = new ArrayList<MinHeapNode>();
     }
 
-    public MinHeap(ArrayList<MinHeapNode> items) {
-
-        this.list = items;
-        buildHeap();
-    }
-
+    /*
+        Adds an element at the end of the arraylist, recursively compares itself
+        with its parent element.If parent is greater, swaps the element and its parent.
+        Continues the same until parent is smaller than child.
+     */
     public void insert(MinHeapNode node) {
-        list.add(node);
-        int i = list.size() - 1;
-        int parent = parent(i);
+        listOfNodes.add(node);
+        int currentPos = listOfNodes.size() - 1;
+        int parentPos = parentPos(currentPos);
 
-        while (parent != i && list.get(i).compareTo(list.get(parent))<0) {
-            swap(i, parent);
-            i = parent;
-            parent = parent(i);
+        while (parentPos != currentPos && listOfNodes.get(currentPos).compareTo(listOfNodes.get(parentPos))<0) {
+            //swapNodes
+            MinHeapNode temp = listOfNodes.get(parentPos);
+            listOfNodes.set(parentPos, listOfNodes.get(currentPos));
+            listOfNodes.set(currentPos, temp);
+            //
+            currentPos = parentPos;
+            parentPos = parentPos(currentPos);
         }
 
         //insert
         WriteFile.writeLineWithNewLine("-----------------------------------------",0);
         WriteFile.writeLineWithNewLine("inserting building no:" + node.building.getBuildingNum(),0);
-        print();
+        printMinHeap();
     }
 
-    public void buildHeap() {
-
-        for (int i = list.size() / 2; i >= 0; i--) {
-            minHeapify(i);
-        }
-    }
-
+    /*
+        Removes the 0th element (smallest executedTime), replace it with the last
+        element of the arraylist, calls heapify(0). Also, returns the removed Node.
+     */
     public MinHeapNode extractMin() {
 
-        if (list.size() == 0) {
-
-            throw new IllegalStateException("MinHeap is EMPTY");
-        } else if (list.size() == 1) {
-
-            MinHeapNode min = list.remove(0);
+        if (listOfNodes.size() == 0) {
+            throw new RuntimeException("No building in the queue.");
+        } else if (listOfNodes.size() == 1) {
+            MinHeapNode min = listOfNodes.remove(0);
             return min;
-
         }
 
-        // remove the last item ,and set it as new root
-        MinHeapNode min = list.get(0);
-        MinHeapNode lastItem = list.remove(list.size() - 1);
-        list.set(0, lastItem);
+        MinHeapNode minNode = listOfNodes.get(0);
+        MinHeapNode lastNode = listOfNodes.remove(listOfNodes.size() - 1);
+        listOfNodes.set(0, lastNode);
 
-        // bubble-down until heap property is maintained
-        minHeapify(0);
+        heapify(0);
 
         // return min key
-        return min;
+        return minNode;
     }
 
-    public void decreaseKey(int i, int key) {
+    /*
+        Starts at input i, find the smallest element between the current node and its children.
+        If the smallest key is not the current key, then swap it with the smallest, and calls heapify(smallest).
+        Bubble down until the min heap property is maintained.
+     */
+    private void heapify(int i) {
 
-        if (list.get(i).building.getExecutedTime() < key) {
+        int leftPos = leftChildPos(i);
+        int rightPos = rightChildPos(i);
+        int smallestNodePos = -1;
 
-            throw new IllegalArgumentException("Key is larger than the original key");
-        }
-        list.get(i).building.setExecutedTime(key);
-        int parent = parent(i);
-
-        // bubble-up until heap property is maintained
-        while (i > 0 && list.get(parent).compareTo(list.get(i))>0) {
-
-            swap(i, parent);
-            i = parent;
-            parent = parent(parent);
-        }
-    }
-
-    private void minHeapify(int i) {
-
-        int left = left(i);
-        int right = right(i);
-        int smallest = -1;
-
-        // find the smallest key between current node and its children.
-        if (left <= list.size() - 1 && list.get(left).compareTo(list.get(i))<0) {
-            smallest = left;
+        if (leftPos <= listOfNodes.size() - 1 && listOfNodes.get(leftPos).compareTo(listOfNodes.get(i))<0) {
+            smallestNodePos = leftPos;
         } else {
-            smallest = i;
+            smallestNodePos = i;
         }
 
-        if (right <= list.size() - 1 && list.get(right).compareTo(list.get(smallest))<0) {
-            smallest = right;
+        if (rightPos <= listOfNodes.size() - 1 && listOfNodes.get(rightPos).compareTo(listOfNodes.get(smallestNodePos))<0) {
+            smallestNodePos = rightPos;
         }
 
-        // if the smallest key is not the current key then bubble-down it.
-        if (smallest != i) {
-
-            swap(i, smallest);
-            minHeapify(smallest);
+        if (smallestNodePos != i) {
+            //swapNodes
+            MinHeapNode temp = listOfNodes.get(smallestNodePos);
+            listOfNodes.set(smallestNodePos, listOfNodes.get(i));
+            listOfNodes.set(i, temp);
+            //
+            heapify(smallestNodePos);
         }
-    }
-
-    public MinHeapNode getMin() {
-
-        return list.get(0);
     }
 
     public boolean isEmpty() {
-
-        return list.size() == 0;
+        return listOfNodes.size() == 0;
     }
 
-    private int right(int i) {
-
-        return 2 * i + 2;
+    private int rightChildPos(int pos) {
+        return 2 * pos + 2;
     }
 
-    private int left(int i) {
-
-        return 2 * i + 1;
+    private int leftChildPos(int pos) {
+        return 2 * pos + 1;
     }
 
-    private int parent(int i) {
-
-        if (i % 2 == 1) {
-            return i / 2;
+    private int parentPos(int pos) {
+        if (pos % 2 == 1) {
+            return pos / 2;
         }
-
-        return (i - 1) / 2;
+        return (pos - 1) / 2;
     }
 
-    private void swap(int i, int parent) {
-
-        MinHeapNode temp = list.get(parent);
-        list.set(parent, list.get(i));
-        list.set(i, temp);
-    }
-
-    public void print() {
-        for (MinHeapNode minHeapNode : list) {
+    public void printMinHeap() {
+        for (MinHeapNode minHeapNode : listOfNodes) {
             WriteFile.writeLineWithNewLine("BuildingNum:" + minHeapNode.building.getBuildingNum() +
                     " ExecutedTime:" + minHeapNode.building.getExecutedTime() +
                     " TotalTime:" + minHeapNode.building.getTotalTime(),0);
         }
         WriteFile.writeLineWithNewLine("-------------------------------------",0);
-        /*
-        for (int i = 1; i <= list.size() / 2; i++) {
-            System.out.print(" PARENT : " + list.get(i).executed_time
-                    + " LEFT CHILD : " + list.get(2 * i).executed_time
-                    + " RIGHT CHILD :" + list.get(2 * i + 1).executed_time);
-            System.out.println();
-        }*/
     }
 
 }

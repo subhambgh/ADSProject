@@ -1,9 +1,15 @@
 package AdsProject;
+/*
+    A pojo class containing all the three building records.
+    Single building reference is stored in both the Red-Black-Tree and MinHeap node,
+    reducing the space complexity of the program.
 
+ */
 public class Building {
-    int buildingNum;
-    int executedTime;
-    int totalTime;
+    int buildingNum;    // unique integer identifier for each building.
+    int executedTime;   // total number of days spent so far on this building
+    int totalTime;      // total number of days needed to complete the construction of the building
+
 
     public Building() {
         this.buildingNum = -1;

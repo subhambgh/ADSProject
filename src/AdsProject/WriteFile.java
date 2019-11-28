@@ -4,7 +4,9 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
-
+/*
+    Used to write the required outputs to a file.
+ */
 public class WriteFile {
     public static int priority = 1;
     public static BufferedWriter out = null;
@@ -18,6 +20,9 @@ public class WriteFile {
         WriteFile.out = out;
     }
 
+    /*
+        Writes to the output file with a new line.
+     */
     public static void writeLineWithNewLine(String output,int p) {
         if(p>=priority){
             try {
@@ -29,6 +34,9 @@ public class WriteFile {
         }
     }
 
+    /*
+        Writes to the output file without a new line.
+     */
     public static void writeLine(String output,int p) {
         if(p>=priority){
             try {
@@ -39,6 +47,9 @@ public class WriteFile {
         }
 
     }
+    /*
+        Close the file.
+     */
     public static void close() throws IOException {
         out.close();
     }

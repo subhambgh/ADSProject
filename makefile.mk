@@ -7,9 +7,9 @@ JC = javac
 CLASSES = \
         Building.java \
         MinHeap.java \
-        RedBlackBST.java \
+        RedBlackTree.java \
         DEPQ.java \
-        Main.java \
+        risingCity.java \
         ReadFile.java \
         WriteFile.java
 

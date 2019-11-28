@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+    Reads the specified input file and stores the input days and operation in a HashMap<Integer,String>.
+ */
 public class ReadFile {
     public static Map<Integer,String> readFile(String fileName) {
         BufferedReader reader;
